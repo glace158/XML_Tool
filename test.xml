@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<libraries>
+	<library name="lib1" location="seoul">
+		<book name="book1" author="Bumjin" price="1000.0">
+			<node pp="1000.0" />
+		</book>
+		<book name="book2" price="2000.0">
+			<node price="1000.0" />
+			<node />
+		</book>
+		<book name="book3" author="Bumjin" price="4000.0" tr="1000.0">
+			<node price="1000.0" />
+		</book>
+		<node />
+	</library>
+	<library name="lib1" location="busan">
+		<book name="book2" author="Bumjin" price="1000.0">
+			<node pp="1000.0" />
+		</book>
+		<book name="book3" author="Apple" price="4000.0">
+			<node price="1000.0" />
+		</book>
+		<book name="book4" author="Siso" price="1000.0">
+			<node price="1000.0" />
+		</book>
+	</library>
+	<ndn price="1000.0" />
+	<node price="1000.0" />
+	<ndn price="1000.0" />
+	<node price="1000.0" />
+</libraries>
