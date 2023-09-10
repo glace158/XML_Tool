@@ -1,8 +1,7 @@
 import sys
 from PySide6.QtWidgets import *
-
+from nodeGraph import *
 class Form(QDialog):
-
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
         self.setWindowTitle("NodeMaker")
@@ -14,6 +13,7 @@ class Form(QDialog):
         self.node_display()
         self.setting_layouts()
         
+        self.node_create()
         # Add button signal to greetings slot
         #        self.button.clicked.connect(self.greetings)
     
@@ -35,11 +35,15 @@ class Form(QDialog):
         
         self.content_button = QPushButton("Contents Setting")
         self.layouts.append(self.create_label_layout("Contents", self.content_button))
-        
+
     def node_display(self):
         self.node_view = QGraphicsView()
-        self.node_graph = QGraphicsScene()
+        self.node_graph = BackgroundGraph()
+        self.node_view.setInteractive(False)
         self.node_view.setScene(self.node_graph)
+
+    def node_create(self):
+        self.node_graph.addItem(NodeGraphics("test"))
 
     def setting_layouts(self):
         # Create layout and add widgets

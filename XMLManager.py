@@ -84,6 +84,7 @@ class XMLTool():
         if parent:
             parent_tag = parent.split("/")[-1]
             path = parent.replace(parent_tag, '')
+            path = parent_tag if path == "" else path
             for chlid in self.tree.findall(path):
                 if parent_tag == chlid.tag:
                     ET.SubElement(chlid, element)
@@ -97,7 +98,9 @@ class XMLTool():
         if parent:
             i = 0
             parent_tag = parent.split("/")[-1]
-            path = parent.replace(parent_tag, '')
+            
+            path = parent.replace(parent_tag, '') 
+            path = parent_tag if path == "" else path
             for chlid in self.tree.findall(path):
                 if parent_tag == chlid.tag:
                     if index == i:
@@ -174,7 +177,7 @@ class XMLTool():
 if __name__ == "__main__":
     xml_tool = XMLTool("test.xml")
     #xml_tool.add_elements("node", "library/book")
-    #xml_tool.add_element("node", "library/book")
+    xml_tool.add_element("node", "library/book")
     #xml_tool.add_attribs("book", "tr", "1000.0")
     #xml_tool.add_attrib("book", "tr", "1000.0", "library", 2)
     #xml_tool.remove_elements("node")

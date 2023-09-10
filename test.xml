@@ -3,6 +3,14 @@
 	<library name="lib1" location="seoul">
 		<book name="book1" author="Bumjin" price="1000.0">
 			<node pp="1000.0" />
+			<node />
+			<node />
+			<node />
+			<node />
+			<node />
+			<node />
+			<node />
+			<node />
 		</book>
 		<book name="book2" price="2000.0">
 			<node price="1000.0" />
@@ -11,6 +19,10 @@
 		<book name="book3" author="Bumjin" price="4000.0" tr="1000.0">
 			<node price="1000.0" />
 		</book>
+		<node />
+		<node />
+		<node />
+		<node />
 		<node />
 	</library>
 	<library name="lib1" location="busan">
