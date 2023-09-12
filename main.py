@@ -1,11 +1,12 @@
 import sys
 from PySide6.QtWidgets import *
-from nodeGraph import *
+from nodeGraph import BackgroundGraph, NodeGraphics
+from node import *
 class Form(QDialog):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
         self.setWindowTitle("NodeMaker")
-        self.setFixedSize(700,500)
+        self.setFixedSize(1000,700)
         # Create widgets
         self.layouts = []
         
@@ -43,7 +44,8 @@ class Form(QDialog):
         self.node_view.setScene(self.node_graph)
 
     def node_create(self):
-        self.node_graph.addItem(NodeGraphics("test"))
+        #self.node_graph.addItem(NodeGraphics("test"))
+        self.node_graph.addItem(LineEditDecorator(Node()))
 
     def setting_layouts(self):
         # Create layout and add widgets

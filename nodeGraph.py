@@ -1,5 +1,3 @@
-from typing import Optional
-import PySide6.QtGui
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -64,10 +62,9 @@ class BackgroundGraph(QGraphicsScene):
 
 #원본 객체와 장식된 객체 모두를 묶는 인터페이스
 class INode(QGraphicsItem):
-    def __init__(self, parent: QGraphicsItem | None = ...) -> None:
+    def __init__(self, parent: QGraphicsItem = None) -> None:
         super().__init__(parent)
-
-        self.width = 150
+        self.width = 300
         self.height = 300
         self.node_shape = "RECTANGLE"
         color = "GRAY"
@@ -78,18 +75,29 @@ class INode(QGraphicsItem):
 
         self.set_color(color)
         self.content()
-        
-    def set_color(self, color:str, title_color:str = None):
+
+    def set_color(self, color:str = "GRAY", title_color:str = None):
         pass
 
     def content(self):
         pass
 
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        pass 
+
 # 장식될 원본 객체
 class Node(INode):
-    def __init__(self, parent: QGraphicsItem | None = ...) -> None:
+    def __init__(self, parent: QGraphicsItem = None) -> None:
         super().__init__(parent)
-
+        
+    def boundingRect(self):
+        return QRectF(
+            0,
+            0,
+            2 * self.edge_size + self.width,
+            2 * self.edge_size + self.height
+        ).normalized()
+    
     def set_color(self, color: str, title_color: str = None):
         color_list = {
             "BLACK": "#000000",
@@ -138,11 +146,40 @@ class Node(INode):
 
     def content(self):
         pass
+    
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        # title
+        path_title = QPainterPath()
+        path_title.setFillRule(Qt.WindingFill)
+        path_title.addRoundedRect(0,0, self.width, self.title_height, self.edge_size, self.edge_size)
+        path_title.addRect(0, self.title_height - self.edge_size, self.edge_size, self.edge_size)
+        path_title.addRect(self.width - self.edge_size, self.title_height - self.edge_size, self.edge_size, self.edge_size)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self._brush_title)
+        painter.drawPath(path_title.simplified())
+
+        # content
+        path_content = QPainterPath()
+        path_content.setFillRule(Qt.WindingFill)
+        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_size, self.edge_size)#라운딩 박스 그리기
+        path_content.addRect(0, self.title_height, self.edge_size, self.edge_size)#라운딩 된 부분 매꾸기
+        path_content.addRect(self.width - self.edge_size, self.title_height, self.edge_size, self.edge_size)#라운딩 된 부분 매꾸기
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self._brush_background)
+        painter.drawPath(path_content.simplified())
+
+        # outline
+        path_outline = QPainterPath()
+        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
+        painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+        painter.setBrush(Qt.NoBrush)
+        painter.drawPath(path_outline.simplified())
 
 class NodeDecorator(INode):
     def __init__(self, component:INode):
         super().__init__()
         self.component = component
+        print(self.component)
     
     def set_color(self, color: str, title_color: str = None):
         self.component.set_color(color, title_color)
@@ -196,6 +233,7 @@ class LineEditDecorator(NodeDecorator):
 
         self.grContent.setWidget(line_edit)
 
+#=================
 class NodeGraphics(QGraphicsItem):
     def __init__(self, title:str):
         super().__init__()
@@ -212,7 +250,7 @@ class NodeGraphics(QGraphicsItem):
         self.set_color(color)
         self.initcontent(title)
         
-        self.initTitle(title)
+        #self.initTitle(title)
 
     
     def boundingRect(self):
@@ -271,7 +309,7 @@ class NodeGraphics(QGraphicsItem):
 
     def initTitle(self, title):
 
-        title_font_color = Qt.white
+        #title_font_color = Qt.white
         title_font = QFont("Ubuntu", 12)
         self.title_item = QLabel(title)
         #title_item.setPlainText(title)
