@@ -1,7 +1,10 @@
 import sys
 from PySide6.QtWidgets import *
-from nodeGraph import BackgroundGraph, NodeGraphics
+from nodeGraph import BackgroundGraph
+
+from widgetDisplay import *
 from node import *
+
 class Form(QDialog):
     def __init__(self, parent=None):
         super(Form, self).__init__(parent)
@@ -10,32 +13,10 @@ class Form(QDialog):
         # Create widgets
         self.layouts = []
         
-        self.setting_widgets()
-        self.node_display()
-        self.setting_layouts()
-        
-        self.node_create()
-        # Add button signal to greetings slot
-        #        self.button.clicked.connect(self.greetings)
-    
-    def setting_widgets(self):
-        self.name_edit = QLineEdit()
-        self.layouts.append(self.create_label_layout("Name", self.name_edit))
-        
-        self.pin_button = QPushButton("Pin Setting")
-        self.layouts.append(self.create_label_layout("Pin", self.pin_button))
+        self.node_display()# 노드 화면 구성
+        self.set_display()# 전체 화면 구성
 
-        self.shape_combo = QComboBox()
-        self.shape_combo.addItem("rectangle")
-        self.shape_combo.addItem("Circle")
-        self.shape_combo.addItem("Diamond")
-        self.layouts.append(self.create_label_layout("Shape", self.shape_combo))
-        
-        self.img_edit = FileEdit("Drag&Drop here")
-        self.layouts.append(self.create_label_layout("Iamge URL", self.img_edit))
-        
-        self.content_button = QPushButton("Contents Setting")
-        self.layouts.append(self.create_label_layout("Contents", self.content_button))
+        self.node_create()
 
     def node_display(self):
         self.node_view = QGraphicsView()
@@ -43,23 +24,25 @@ class Form(QDialog):
         self.node_view.setInteractive(False)
         self.node_view.setScene(self.node_graph)
 
-    def node_create(self):
-        #self.node_graph.addItem(NodeGraphics("test"))
-        self.node_graph.addItem(LineEditDecorator(Node()))
-
-    def setting_layouts(self):
-        # Create layout and add widgets
+    def set_display(self):
         h_layout = QHBoxLayout()
         
-        v_layout = QVBoxLayout()
+        widget_layout = WidgetDisplay().get_layout()
 
-        for layout in self.layouts: 
-            v_layout.addLayout(layout)
-        
-        h_layout.addLayout(v_layout)
+        h_layout.addLayout(widget_layout)
         h_layout.addWidget(self.node_view)    
         # Set dialog layout
         self.setLayout(h_layout)
+
+    def node_create(self):
+        node = NodeFactory().get_node("rectangle")
+        con_list = [{"type": "label"}, {"type": "line"}]
+        content = ContentFactory(con_list)
+
+        node.add_content(content)
+
+        self.node_graph.addItem(node)
+
 
     def create_label_layout(self, label_text:str, widget:QWidget):
         layout = QHBoxLayout()
@@ -67,37 +50,8 @@ class Form(QDialog):
         layout.addWidget(label)
         layout.addWidget(widget)
         return layout
-    
-    # Greets the user
-    def greetings(self):
-        print(f"Hello {self.edit.text()}")
-        
-class FileEdit(QLineEdit):
-    def __init__( self, parent=None):
-        super(FileEdit, self).__init__(parent)
+     
 
-        self.setDragEnabled(True)
-
-    def dragEnterEvent( self, event ):
-        data = event.mimeData()
-        urls = data.urls()
-        if ( urls and urls[0].scheme() == 'file' ):
-            event.acceptProposedAction()
-
-    def dragMoveEvent( self, event ):
-        data = event.mimeData()
-        urls = data.urls()
-        if ( urls and urls[0].scheme() == 'file' ):
-            event.acceptProposedAction()
-
-    def dropEvent( self, event ):
-        data = event.mimeData()
-        urls = data.urls()
-        if ( urls and urls[0].scheme() == 'file' ):
-            # for some reason, this doubles up the intro slash
-            filepath = str(urls[0].path())[1:]
-            self.setText(filepath)
-            
 if __name__ == '__main__':
     # Create the Qt Application
     app = QApplication(sys.argv)
